@@ -53,6 +53,7 @@
             font-size: 20px;
             cursor: pointer;
             margin-bottom: 20px;
+            transition: background-color 0.3s;
         }
 
         .button-container {
@@ -70,8 +71,14 @@
             border-radius: 15px;
             font-size: 12px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
+        /* Hover effect */
+        .placeholder-button:hover, .language-button:hover, .search-button:hover {
+            background-color: #d0d0d0; /* Darker shade of the original color */
+        }
+        
         .text {
             margin: 20px 0;
             font-size: 18px;
