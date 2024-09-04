@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'login',
     'apps.search_link.apps.SearchLinkConfig',
-    "django_rq",
 ]
 
 MIDDLEWARE = [
@@ -163,7 +162,7 @@ STATIC_URL = '/static/'
 
 # The absolute path to the directory where collectstatic will collect static files for deployment.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -179,28 +178,34 @@ AUTH_USER_MODEL = 'auth.User'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'formatter': 'verbose',
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'formatter': 'simple',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['file', 'console'],
             'level': 'DEBUG',
-        },
-        '__main__': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }
-
-RQ_QUEUES = {
-    'default': {
-        'URL': os.getenv('REDISTOGO_URL', 'redis://localhost:6379/0'), # If you're on Heroku
-        'DEFAULT_TIMEOUT': 500,
-        },
-}
-
