@@ -3,26 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keyword Search Tool</title>
-    {% load static %} <!-- Load the static tag library -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <script>
-        function openLoginWindow() {
-            const url = document.getElementById('url').value;
-            window.open(url, '_blank');
+    <title>Top Navigation with Logo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #fff;
         }
-    </script>
+
+        .image {
+            width: 350px;
+            height: 200px;
+            background-color: #ffffff;
+            margin: 20px auto;
+        }
+
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill; /* ensure images cover the  div */
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+        }
+        .top-bar .logo {
+            max-width: 175px; /* controll logo size*/
+        }
+        .top-bar .logo img {
+            width: 100%;
+            height: auto;
+        }
+        .top-bar .nav-buttons {
+            display: flex;
+            align-items: center;
+        }
+        .top-bar button {
+            background-color: transparent;
+            border: none;
+            color: #004080;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+        .top-bar button i {
+            margin-right: 8px;
+        }
+        .top-bar button:hover {
+            color: #0066cc;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Space between buttons */
+            margin-top: 10px; /* Move the container down instead of the buttons */
+        }
+
+        .text-button, .links-button {
+            width: 120px;
+            height: 50px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            background-color: #004080; /* Deep blue background */
+            color: #ffffff; /* White text color */
+        }
+
+         /* Hover effect */
+         .text-button:hover, .links-button:hover{
+            background-color: #d0d0d0; /* Darker shade of the original color */
+        }
+
+        .text {
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .link {
+            text-decoration: underline;
+            color: blue;
+            font-size: 18px;
+        }
+
+        input[type="text"] {
+            width: 400px;
+            padding: 5px;
+            margin-bottom: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #specifiedText {
+            display: none;
+            width: 400px; /* Set same width as the first input */
+            margin: 10px auto; /* Center it horizontally */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+    </style>
+
 </head>
 <body>
-    <h1>Keyword Search Tool</h1>
+    {% load static %}
+
+    <div class="top-bar">
+        <div class="logo">
+            <a href="https://www.unimelb.edu.au" target="_blank">
+            <img src="{% static 'images/unimelb.jpg' %}" alt="Logo">
+            </a>
+        </div>
+        <div class="nav-buttons">
+            <button><i class="fas fa-user"></i> My Account</button>
+            <button><i class="fas fa-globe"></i> Language</button>
+            <button><i class="fas fa-info-circle"></i> Help</button>
+        </div>
+    </div>
+
+    <div class="image">
+        <img src="{% static 'images/page.svg' %}" alt="page Logo">
+    </div>
+
     <form action="{% url 'search_link' %}" method="post">
         {% csrf_token %}
-        <label for="url">Enter Website URL:</label>
-        <input type="text" id="url" name="url" required>
-        {% comment %} <label for="keyword">Enter Keyword:</label> {% endcomment %}
-        {% comment %} <input type="text" id="keyword" name="keyword" required> {% endcomment %}
-        {% comment %} <button type="button" onclick="openLoginWindow()">Open Login Page</button> {% endcomment %}
-        <button type="submit">Search</button>
+        <input type="text" id="url" name="url" placeholder="Click to enter URL" required>
+        <input type="text" id="specifiedText" name="specifiedText" placeholder="Click to enter TEXT">
+
+        <div class="button-container">
+            <button class="text-button" type="submit" id="showHidden">SEARCH FOR TEXT <i class="fas fa-search"></i></button>
+            <button class="links-button" type="submit" id="searchLinks"> SEARCH FOR LINKS <i class="fas fa-search"></i></button>
+        </div>
     </form>
+
+    <div class="text">Tool reviews university of Melbourne websites,
+        detects <br> broken links, specified text, facilitates updates, extends to <br> SharePoint document checks. </div>
+
+    <script>
+        // Add a click event listener to control the behavior of the "SEARCH FOR TEXT" button
+        document.getElementById("showHidden").addEventListener("click", function(event) {
+            var input = document.getElementById("specifiedText");
+
+            if (input.style.display === "none" || input.style.display === "") {
+                input.style.display = "block";
+                input.setAttribute("required", "true"); // Show and set it as a required field
+                event.preventDefault(); // Prevent form submission and show the input field
+            } else if (input.style.display === "block") {
+                if (!input.value) {
+                    input.style.display = "none";
+                    input.removeAttribute("required"); // Remove required attribute
+                    event.preventDefault(); // Prevent submission and hide the input field
+                }
+                // Otherwise, the form will proceed to submit
+            }
+        });
+
+        // Add a click event listener for the "SEARCH FOR LINKS" button, preventing form submission if the text input field is visible
+        document.getElementById("searchLinks").addEventListener("click", function(event) {
+            var input = document.getElementById("specifiedText");
+
+            // Check if the specified input field is visible
+            if (input.style.display === "block") {
+                // Prevent form submission
+                event.preventDefault();
+                alert("You cannot submit the form while the specified TEXT input box is visible using this button.");
+            }
+            // If specifiedText is hidden, the form will submit normally
+        });
+    </script>
 </body>
 </html>

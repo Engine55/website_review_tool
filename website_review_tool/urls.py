@@ -19,5 +19,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('search_link/', include('search_link.urls')),
     path('', include('login.urls')),
-    path('django-rq/', include('django_rq.urls')),
 ]
